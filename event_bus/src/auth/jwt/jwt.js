@@ -2,7 +2,7 @@ const { sign, verify } = require("jsonwebtoken");
 
 // setting token
 async function setToken(data) {
-  const token = sign(data, process.env.JWT_SECRET, {
+  const token = sign({ data }, process.env.JWT_SECRET, {
     expiresIn: "1d",
   });
   return token;

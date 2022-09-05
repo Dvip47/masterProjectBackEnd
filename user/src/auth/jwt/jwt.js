@@ -1,11 +1,14 @@
 const { sign, verify } = require("jsonwebtoken");
-
 // setting token
 async function setToken(data) {
-  const token = sign(data, process.env.JWT_SECRET, {
-    expiresIn: "1d",
-  });
-  return token;
+  try {
+    const token = sign({ data }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+    return token;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 // validating token

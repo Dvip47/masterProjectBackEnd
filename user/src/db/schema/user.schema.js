@@ -7,6 +7,7 @@ const UserSchema = mongoose.Schema({
   code: Number,
   token: { type: String, index: true },
   passward: String,
+  verified: Boolean,
 });
 const User = mongoose.model("User", UserSchema);
 module.exports = User;

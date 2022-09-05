@@ -8,6 +8,7 @@ const UserSchema = mongoose.Schema({
   code: Number,
   active: Boolean,
   kyc: Boolean,
+  verified: Boolean,
 });
 
 const User = mongoose.model("Users", UserSchema);
