@@ -62,11 +62,11 @@ async function forgetM(body) {
         body.email,
         subject,
         message,
-        `http://localhost:3000/travelRxReset${token.slice(6)}`
+        `http://localhost:3000/travelRxReset${token.slice(15)}`
       );
       await User.findOneAndUpdate(
         { email: body.email },
-        { $set: { token: token.slice(6) } }
+        { $set: { token: token.slice(15) } }
       );
       return { message: "mail sent", success: true, token: null };
     } else {
@@ -83,13 +83,13 @@ async function forgetM(body) {
 async function verifyM(query) {
   try {
     const { token } = query;
-    await User.findOneAndUpdate(
+    const user = await User.findOneAndUpdate(
       { token },
       {
         $set: { verified: true },
       }
     );
-    return { message: "User verified", success: true, token: null };
+    return { message: user, success: true, token: null };
   } catch (error) {
     return {
       message: error,
@@ -103,15 +103,21 @@ async function resetM(body) {
     const user = await User.findOne({ token: body.token });
     if (user?.email) {
       let hashedPassward = await bcrypt.hash(body.passward, 10);
-      await User.findOneAndUpdate(
+      const updatedUser = await User.findOneAndUpdate(
         { _id: user._id },
         {
           $set: {
             passward: hashedPassward,
+            token: "",
           },
         }
       );
-      return { message: "User password changed", success: true, token: null };
+
+      return {
+        message: { ...updatedUser?._doc, passward: hashedPassward },
+        success: true,
+        token: null,
+      };
     } else {
       return { message: "Invalid request", success: false, token: null };
     }

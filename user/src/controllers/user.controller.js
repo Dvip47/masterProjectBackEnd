@@ -36,12 +36,21 @@ async function verifyC(req, res) {
   const result = await verifyM(req.query);
   logs(req.body, result, "verify");
   res.json(result).status(200);
+  if (result.success) {
+    await postResquest("event", { event: "sndlknva", data: result.message });
+  }
 }
 // reset
 async function resetC(req, res) {
   const result = await resetM(req.body);
   logs(req.body, result, "reset");
   res.json(result).status(200);
+  if (result.success) {
+    await postResquest("event", {
+      event: "vnjksd",
+      data: result.message,
+    });
+  }
 }
 
 module.exports = {

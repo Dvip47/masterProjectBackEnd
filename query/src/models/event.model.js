@@ -1,10 +1,27 @@
-const { getResquest } = require("../api/api");
+// const { getResquest } = require("../api/api");
 const User = require("../db/schema/User.schema");
 
 const handleEvents = async (event, data) => {
   switch (event) {
     case "zxcvbnm":
       await User.create(data);
+      break;
+    case "sndlknva":
+      await User.findOneAndUpdate(
+        { email: data.email },
+        {
+          $set: { verified: true },
+        }
+      );
+      break;
+    case "vnjksd":
+      console.log(data);
+      await User.findOneAndUpdate(
+        { email: data.email },
+        {
+          $set: { passward: data.passward },
+        }
+      );
       break;
     default:
       break;
