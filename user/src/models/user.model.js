@@ -27,12 +27,21 @@ async function loginM({ email, passward }) {
 async function signupM(body) {
   try {
     let hashedPassward = await bcrypt.hash(body.passward, 10);
+    let token = await bcrypt.hash(body.email, 10);
+
     const data = {
       ...body,
       passward: hashedPassward,
       verified: false,
+      token,
     };
     const user = await User.create(data);
+    sendEmail(
+      body.email,
+      "Verify your email",
+      "Click here to verify email !",
+      `http://localhost:5000/user/v1/verify?token=${token}`
+    );
     return { message: user, success: true, token: null };
   } catch (error) {
     return {
@@ -44,12 +53,69 @@ async function signupM(body) {
 }
 async function forgetM(body) {
   try {
-    const message = "Click on link to change passward ";
-    const subject = "Reset Password";
-    await sendEmail(body.email, subject, message);
-    return { message: "mail sent", success: true, token: null };
+    const user = await User.findOne({ email: body.email });
+    if (user?.email) {
+      let token = await bcrypt.hash(body.email, 10);
+      const message = "Click on link to change passward !";
+      const subject = "Reset Password";
+      await sendEmail(
+        body.email,
+        subject,
+        message,
+        `http://localhost:3000/travelRxReset${token.slice(6)}`
+      );
+      await User.findOneAndUpdate(
+        { email: body.email },
+        { $set: { token: token.slice(6) } }
+      );
+      return { message: "mail sent", success: true, token: null };
+    } else {
+      return { message: "user not found", success: false, token: null };
+    }
   } catch (error) {
-    console.log(error);
+    return {
+      message: error,
+      success: false,
+      token: null,
+    };
+  }
+}
+async function verifyM(query) {
+  try {
+    const { token } = query;
+    await User.findOneAndUpdate(
+      { token },
+      {
+        $set: { verified: true },
+      }
+    );
+    return { message: "User verified", success: true, token: null };
+  } catch (error) {
+    return {
+      message: error,
+      success: false,
+      token: null,
+    };
+  }
+}
+async function resetM(body) {
+  try {
+    const user = await User.findOne({ token: body.token });
+    if (user?.email) {
+      let hashedPassward = await bcrypt.hash(body.passward, 10);
+      await User.findOneAndUpdate(
+        { _id: user._id },
+        {
+          $set: {
+            passward: hashedPassward,
+          },
+        }
+      );
+      return { message: "User password changed", success: true, token: null };
+    } else {
+      return { message: "Invalid request", success: false, token: null };
+    }
+  } catch (error) {
     return {
       message: error,
       success: false,
@@ -61,4 +127,6 @@ module.exports = {
   loginM,
   signupM,
   forgetM,
+  verifyM,
+  resetM,
 };

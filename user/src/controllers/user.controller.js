@@ -1,7 +1,14 @@
 // calling log function
 const logs = require("../common/logs.common");
+const path = require("path");
 // calling logic function
-const { loginM, signupM, forgetM } = require("../models/user.model");
+const {
+  loginM,
+  signupM,
+  forgetM,
+  verifyM,
+  resetM,
+} = require("../models/user.model");
 const { postResquest } = require("../api/api");
 // login
 async function loginC(req, res) {
@@ -24,8 +31,23 @@ async function forgetC(req, res) {
   logs(req.body, result, "forget");
   res.json(result).status(200);
 }
+// verify
+async function verifyC(req, res) {
+  const result = await verifyM(req.query);
+  logs(req.body, result, "verify");
+  res.json(result).status(200);
+}
+// reset
+async function resetC(req, res) {
+  const result = await resetM(req.body);
+  logs(req.body, result, "reset");
+  res.json(result).status(200);
+}
+
 module.exports = {
   loginC,
   signupC,
   forgetC,
+  verifyC,
+  resetC,
 };

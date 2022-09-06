@@ -21,7 +21,7 @@ const server = gateway({
       prefix: "/user",
       target: "http://127.0.0.1:4000",
       middlewares: [token],
-      methods: ["POST", "PATCH"],
+      methods: ["POST", "PATCH", "GET", "DELETE"],
     },
   ],
 });

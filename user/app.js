@@ -9,7 +9,7 @@ const port = process.env.PORT;
 // const morgan = require("morgan");
 const helmet = require("helmet");
 // const fs = require("fs");
-// const path = require("path");
+const path = require("path");
 const { startDb } = require("./src/db/connection/db.connection");
 const bodyparser = require("body-parser");
 const UserRouter = require("./src/routes/user.routes");
@@ -51,7 +51,6 @@ app.use((err, req, res, next) => {
     next();
   }
 });
-// socket start
 // startSocket(socket);
 // adding routing middle ware
 app.use("/v1", UserRouter);
