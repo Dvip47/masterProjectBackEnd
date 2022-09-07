@@ -9,6 +9,7 @@ const UserSchema = mongoose.Schema({
   active: Boolean,
   kyc: Boolean,
   verified: Boolean,
+  profileImg: String,
 });
 
 const User = mongoose.model("Users", UserSchema);

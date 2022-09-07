@@ -15,11 +15,18 @@ const handleEvents = async (event, data) => {
       );
       break;
     case "vnjksd":
-      console.log(data);
       await User.findOneAndUpdate(
         { email: data.email },
         {
           $set: { passward: data.passward },
+        }
+      );
+      break;
+    case "oareoie":
+      await User.findOneAndUpdate(
+        { email: data.email },
+        {
+          $set: { profileImg: data.profileImg },
         }
       );
       break;

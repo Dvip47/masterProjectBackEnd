@@ -23,6 +23,12 @@ const server = gateway({
       middlewares: [token],
       methods: ["POST", "PATCH", "GET", "DELETE"],
     },
+    {
+      prefix: "/kyc",
+      target: "http://127.0.0.1:4001",
+      middlewares: [token],
+      methods: ["POST", "PATCH", "GET", "DELETE"],
+    },
   ],
 });
 server.use(

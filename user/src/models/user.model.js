@@ -2,6 +2,7 @@ const { setToken } = require("../auth/jwt/jwt");
 const User = require("../db/schema/user.schema");
 const bcrypt = require("bcrypt");
 const sendEmail = require("../common/email.common");
+const uploadDocs = require("../common/image.common");
 async function loginM({ email, passward }) {
   try {
     const user = await User.findOne({ email });
@@ -129,10 +130,45 @@ async function resetM(body) {
     };
   }
 }
+async function updateProfileM(req) {
+  try {
+    let file = req.file;
+    if (file?.fieldname) {
+      const res = await uploadDocs(req);
+      const profileImg = res.message;
+      const user = await User.findOne(
+        { email: req.body.email },
+        { ...req.body, profileImg },
+        {
+          upsert: true,
+          returnDocument: "after",
+          new: true,
+          setDefaultsOnInsert: true,
+        }
+      );
+      return { message: user, success: false, token: null };
+    } else {
+      const user = await User.findOne({ email: req.body.email }, req.body, {
+        upsert: true,
+        returnDocument: "after",
+        new: true,
+        setDefaultsOnInsert: true,
+      });
+      return { message: user, success: false, token: null };
+    }
+  } catch (error) {
+    return {
+      message: error,
+      success: false,
+      token: null,
+    };
+  }
+}
 module.exports = {
   loginM,
   signupM,
   forgetM,
   verifyM,
   resetM,
+  updateProfileM,
 };

@@ -1,7 +1,8 @@
 const express = require("express");
 const UserRouter = express.Router();
 const { Segments, celebrate, Joi } = require("celebrate");
-
+const multer = require("multer");
+const upload = multer();
 const signupCelebrate = {
   [Segments.BODY]: Joi.object().keys({
     mobile: Joi.number().required(),
@@ -41,10 +42,12 @@ const {
   forgetC,
   verifyC,
   resetC,
+  updateProfileC,
 } = require("../controllers/user.controller");
 UserRouter.post("/signup", celebrate(signupCelebrate), signupC);
 UserRouter.post("/login", celebrate(loginCelebrate), loginC);
 UserRouter.post("/forget", celebrate(forgetCelebrate), forgetC);
 UserRouter.get("/verify", celebrate(verifyCelebrate), verifyC);
 UserRouter.post("/reset", celebrate(resetCelebrate), resetC);
+UserRouter.post("/updateProfile", upload.single("image"), updateProfileC);
 module.exports = UserRouter;

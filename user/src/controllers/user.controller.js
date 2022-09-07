@@ -8,6 +8,7 @@ const {
   forgetM,
   verifyM,
   resetM,
+  updateProfileM,
 } = require("../models/user.model");
 const { postResquest } = require("../api/api");
 // login
@@ -52,6 +53,18 @@ async function resetC(req, res) {
     });
   }
 }
+// update
+async function updateProfileC(req, res) {
+  const result = await updateProfileM(req);
+  logs(req.body, result, "updateProfile");
+  res.json(result).status(200);
+  if (result.success) {
+    await postResquest("event", {
+      event: "sdijspofij",
+      data: result.message,
+    });
+  }
+}
 
 module.exports = {
   loginC,
@@ -59,4 +72,5 @@ module.exports = {
   forgetC,
   verifyC,
   resetC,
+  updateProfileC,
 };
