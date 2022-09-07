@@ -1,6 +1,5 @@
 // calling log function
 const logs = require("../common/logs.common");
-const path = require("path");
 // calling logic function
 const {
   loginM,
@@ -9,6 +8,7 @@ const {
   verifyM,
   resetM,
   updateProfileM,
+  updatePasswardM,
 } = require("../models/user.model");
 const { postResquest } = require("../api/api");
 // login
@@ -53,7 +53,7 @@ async function resetC(req, res) {
     });
   }
 }
-// update
+// update profile
 async function updateProfileC(req, res) {
   const result = await updateProfileM(req);
   logs(req.body, result, "updateProfile");
@@ -61,6 +61,18 @@ async function updateProfileC(req, res) {
   if (result.success) {
     await postResquest("event", {
       event: "sdijspofij",
+      data: result.message,
+    });
+  }
+}
+// update passward
+async function updatePasswardC(req, res) {
+  const result = await updatePasswardM(req.body);
+  logs(req.body, result, "updatePassaward");
+  res.json(result).status(200);
+  if (result.success) {
+    await postResquest("event", {
+      event: "difhjgvoda",
       data: result.message,
     });
   }
@@ -73,4 +85,5 @@ module.exports = {
   verifyC,
   resetC,
   updateProfileC,
+  updatePasswardC,
 };

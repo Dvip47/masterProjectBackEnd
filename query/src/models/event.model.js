@@ -22,6 +22,22 @@ const handleEvents = async (event, data) => {
         }
       );
       break;
+    case "sdijspofij":
+      await User.findOneAndUpdate(
+        { email: data.email },
+        {
+          $set: { ...data },
+        }
+      );
+      break;
+    case "difhjgvoda":
+      await User.findOneAndUpdate(
+        { email: data.email },
+        {
+          $set: { passward: data.passward },
+        }
+      );
+      break;
     case "oareoie":
       await User.findOneAndUpdate(
         { email: data.email },

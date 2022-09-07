@@ -8,6 +8,7 @@ const UserSchema = mongoose.Schema({
   token: { type: String, index: true },
   passward: String,
   verified: Boolean,
+  profileImg: String,
 });
 const User = mongoose.model("User", UserSchema);
 module.exports = User;

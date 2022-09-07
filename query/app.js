@@ -15,6 +15,8 @@ const bodyparser = require("body-parser");
 const EventRouter = require("./src/routes/event.routes");
 const { isMaster, fork } = require("cluster");
 const { cpus } = require("os");
+const cors = require("cors");
+const ProfileRouter = require("./src/routes/profile.routes");
 // const startSocket = require("./src/web/socket");
 // adding milldlewares
 // Body-parser middleware
@@ -22,7 +24,12 @@ app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
 app.use(express.json());
 app.use(express.static("public"));
-
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 app.use(helmet());
 // result of request validation
 app.use((err, req, res, next) => {
@@ -49,6 +56,7 @@ app.use((err, req, res, next) => {
 // startSocket(socket);
 // adding routing middle ware
 app.use(EventRouter);
+app.use("/v1", ProfileRouter);
 // routing listening
 async function startServer() {
   if (isMaster) {

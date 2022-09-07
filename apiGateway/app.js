@@ -29,6 +29,12 @@ const server = gateway({
       middlewares: [token],
       methods: ["POST", "PATCH", "GET", "DELETE"],
     },
+    {
+      prefix: "/query",
+      target: "http://127.0.0.1:5002",
+      middlewares: [token],
+      methods: ["POST", "PATCH", "GET", "DELETE"],
+    },
   ],
 });
 server.use(

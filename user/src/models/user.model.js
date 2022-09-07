@@ -136,25 +136,25 @@ async function updateProfileM(req) {
     if (file?.fieldname) {
       const res = await uploadDocs(req);
       const profileImg = res.message;
-      const user = await User.findOne(
+      await User.findOneAndUpdate(
         { email: req.body.email },
         { ...req.body, profileImg },
         {
-          upsert: true,
           returnDocument: "after",
           new: true,
-          setDefaultsOnInsert: true,
         }
       );
-      return { message: user, success: false, token: null };
+      return {
+        message: { ...req.body, profileImg },
+        success: true,
+        token: null,
+      };
     } else {
-      const user = await User.findOne({ email: req.body.email }, req.body, {
-        upsert: true,
+      await User.findOneAndUpdate({ email: req.body.email }, req.body, {
         returnDocument: "after",
         new: true,
-        setDefaultsOnInsert: true,
       });
-      return { message: user, success: false, token: null };
+      return { message: req.body, success: true, token: null };
     }
   } catch (error) {
     return {
@@ -164,6 +164,44 @@ async function updateProfileM(req) {
     };
   }
 }
+async function updatePasswardM(body) {
+  try {
+    const user = await User.findOne({ email: body.email });
+    const validatePassward = await bcrypt.compare(
+      body.opassward,
+      user.passward
+    );
+    if (validatePassward) {
+      let hashedPassward = await bcrypt.hash(body.passward, 10);
+      await User.findOneAndUpdate(
+        { email: body.email },
+        { passward: hashedPassward },
+        {
+          returnDocument: "after",
+          new: true,
+        }
+      );
+      return {
+        message: { email: body.email, passward: hashedPassward },
+        success: true,
+        token: null,
+      };
+    } else {
+      return {
+        message: "Wrong passward",
+        success: false,
+        token: null,
+      };
+    }
+  } catch (error) {
+    return {
+      message: error,
+      success: false,
+      token: null,
+    };
+  }
+}
+
 module.exports = {
   loginM,
   signupM,
@@ -171,4 +209,5 @@ module.exports = {
   verifyM,
   resetM,
   updateProfileM,
+  updatePasswardM,
 };
