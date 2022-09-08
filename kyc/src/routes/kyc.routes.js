@@ -1,15 +1,21 @@
 const express = require("express");
-const ProfileRouter = express.Router();
+const KycRouter = express.Router();
 const celebrate = require("celebrate");
 const { getToken } = require("../auth/jwt/jwt");
 // calling functions
-const { ProfileC } = require("../controllers/kyc.controller");
+const { kycC } = require("../controllers/kyc.controller");
 const multer = require("multer");
 const upload = multer();
-// Get game list
 
-//  get token will validate your jwt token
+KycRouter.post(
+  "/kyc",
+  upload.fields([
+    { name: "pan" },
+    { name: "adharFront" },
+    { name: "adharBack" },
+    { name: "uniqueNumber" },
+  ]),
+  kycC
+);
 
-ProfileRouter.post("/profile", upload.single("image"), ProfileC);
-
-module.exports = ProfileRouter;
+module.exports = KycRouter;

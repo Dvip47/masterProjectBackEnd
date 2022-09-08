@@ -10,6 +10,11 @@ const UserSchema = mongoose.Schema({
   kyc: Boolean,
   verified: Boolean,
   profileImg: String,
+  pan: String,
+  adharFront: String,
+  adharBack: String,
+  uniqueNumber: String,
+  kyc: String,
 });
 
 const User = mongoose.model("Users", UserSchema);

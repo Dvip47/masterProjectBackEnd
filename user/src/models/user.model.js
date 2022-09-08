@@ -181,6 +181,12 @@ async function updatePasswardM(body) {
           new: true,
         }
       );
+      sendEmail(
+        body.email,
+        "Reset Password",
+        "Your Password is changed !",
+        `If this action is not taken by you, Please contact customer service `
+      );
       return {
         message: { email: body.email, passward: hashedPassward },
         success: true,
@@ -201,7 +207,6 @@ async function updatePasswardM(body) {
     };
   }
 }
-
 module.exports = {
   loginM,
   signupM,

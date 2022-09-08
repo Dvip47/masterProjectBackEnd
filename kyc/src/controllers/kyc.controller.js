@@ -1,11 +1,12 @@
 // calling log function
+const { postResquest } = require("../api/api");
 const logs = require("../common/logs.common");
 // calling logic function
-const { ProfileM } = require("../models/kyc.model");
-// test to get data
-async function ProfileC(req, res) {
-  const result = await ProfileM(req);
-  logs(req.body, result, "profile");
+const { kycM } = require("../models/kyc.model");
+// kyc
+async function kycC(req, res) {
+  const result = await kycM(req);
+  logs(req.body, result, "kyc");
   res.json(result).status(200);
   if (result.success) {
     await postResquest("event", {
@@ -16,5 +17,5 @@ async function ProfileC(req, res) {
 }
 
 module.exports = {
-  ProfileC,
+  kycC,
 };

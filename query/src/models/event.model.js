@@ -42,7 +42,13 @@ const handleEvents = async (event, data) => {
       await User.findOneAndUpdate(
         { email: data.email },
         {
-          $set: { profileImg: data.profileImg },
+          $set: {
+            pan: data.pan,
+            adharFront: data.adharFront,
+            adharBack: data.adharBack,
+            uniqueNumber: data.uniqueNumber,
+            kyc: "pending",
+          },
         }
       );
       break;
