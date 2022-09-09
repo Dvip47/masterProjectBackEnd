@@ -29,12 +29,12 @@ async function signupM(body) {
   try {
     let hashedPassward = await bcrypt.hash(body.passward, 10);
     let token = await bcrypt.hash(body.email, 10);
-
     const data = {
       ...body,
       passward: hashedPassward,
       verified: false,
       token,
+      security: "none",
     };
     const user = await User.create(data);
     sendEmail(
@@ -207,6 +207,29 @@ async function updatePasswardM(body) {
     };
   }
 }
+async function securityM(body) {
+  try {
+    await User.findOneAndUpdate(
+      { email: body.email },
+      { security: body.type },
+      {
+        returnDocument: "after",
+        new: true,
+      }
+    );
+    return {
+      message: { email: body.email, security: body.type },
+      success: true,
+      token: null,
+    };
+  } catch (error) {
+    return {
+      message: error,
+      success: false,
+      token: null,
+    };
+  }
+}
 module.exports = {
   loginM,
   signupM,
@@ -215,4 +238,5 @@ module.exports = {
   resetM,
   updateProfileM,
   updatePasswardM,
+  securityM,
 };

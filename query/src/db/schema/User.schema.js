@@ -15,6 +15,7 @@ const UserSchema = mongoose.Schema({
   adharBack: String,
   uniqueNumber: String,
   kyc: String,
+  security: String,
 });
 
 const User = mongoose.model("Users", UserSchema);

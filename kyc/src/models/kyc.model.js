@@ -1,6 +1,7 @@
 const { getResquest } = require("../api/api");
 const axios = require("axios");
 const FormData = require("form-data");
+const Kyc = require("../db/schema/Kyc.schema");
 const uploadDocs = async (req) => {
   try {
     let AllFile = req.files;
@@ -43,6 +44,7 @@ const uploadDocs = async (req) => {
 async function kycM(req) {
   try {
     let res = await uploadDocs(req);
+    await Kyc.create({ email: req.body.email, ...res.message });
     return {
       message: { email: req.body.email, ...res.message },
       success: true,

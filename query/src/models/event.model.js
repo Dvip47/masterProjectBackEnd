@@ -1,6 +1,6 @@
 // const { getResquest } = require("../api/api");
+const Bank = require("../db/schema/Bank.schema");
 const User = require("../db/schema/User.schema");
-
 const handleEvents = async (event, data) => {
   switch (event) {
     case "zxcvbnm":
@@ -48,6 +48,43 @@ const handleEvents = async (event, data) => {
             adharBack: data.adharBack,
             uniqueNumber: data.uniqueNumber,
             kyc: "pending",
+          },
+        }
+      );
+      break;
+    case "fseifjwo":
+      await Bank.create(data);
+      break;
+    case "sdjfisosopd":
+      await Bank.findOneAndUpdate(
+        { email: data.email, accountNumber: data.accountNumber },
+        {
+          $set: {
+            accountHolderName: data.accountHolderName,
+            bankStatus: data.bankStatus,
+            userBankUniqueId: data.userBankUniqueId,
+            bankActive: data.bankActive,
+            utr: data.utr,
+          },
+        }
+      );
+      break;
+    case "skmohiasta":
+      await Bank.findOneAndUpdate(
+        { email: data.email, accountNumber: data.accountNumber },
+        {
+          $set: {
+            bankStatus: data.bankStatus,
+          },
+        }
+      );
+      break;
+    case "mdoifvjhvn":
+      await User.findOneAndUpdate(
+        { email: data.email },
+        {
+          $set: {
+            security: data.security,
           },
         }
       );

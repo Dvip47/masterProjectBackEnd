@@ -9,6 +9,7 @@ const {
   resetM,
   updateProfileM,
   updatePasswardM,
+  securityM,
 } = require("../models/user.model");
 const { postResquest } = require("../api/api");
 // login
@@ -77,6 +78,18 @@ async function updatePasswardC(req, res) {
     });
   }
 }
+// security
+async function securityC(req, res) {
+  const result = await securityM(req.body);
+  logs(req.body, result, "security");
+  res.json(result).status(200);
+  if (result.success) {
+    await postResquest("event", {
+      event: "mdoifvjhvn",
+      data: result.message,
+    });
+  }
+}
 
 module.exports = {
   loginC,
@@ -86,4 +99,5 @@ module.exports = {
   resetC,
   updateProfileC,
   updatePasswardC,
+  securityC,
 };
