@@ -10,6 +10,7 @@ const {
   updateProfileM,
   updatePasswardM,
   securityM,
+  verifysecurityM,
 } = require("../models/user.model");
 const { postResquest } = require("../api/api");
 // login
@@ -83,7 +84,13 @@ async function securityC(req, res) {
   const result = await securityM(req.body);
   logs(req.body, result, "security");
   res.json(result).status(200);
-  if (result.success) {
+}
+// verify security
+async function verifysecurityC(req, res) {
+  const result = await verifysecurityM(req.body);
+  logs(req.body, result, "security");
+  res.json(result).status(200);
+  if (result.success == true) {
     await postResquest("event", {
       event: "mdoifvjhvn",
       data: result.message,
@@ -100,4 +107,5 @@ module.exports = {
   updateProfileC,
   updatePasswardC,
   securityC,
+  verifysecurityC,
 };

@@ -10,6 +10,7 @@ const UserSchema = mongoose.Schema({
   verified: Boolean,
   profileImg: String,
   security: String,
+  loginOtp: Number,
 });
 const User = mongoose.model("User", UserSchema);
 module.exports = User;

@@ -3,6 +3,32 @@ const User = require("../db/schema/user.schema");
 const bcrypt = require("bcrypt");
 const sendEmail = require("../common/email.common");
 const uploadDocs = require("../common/image.common");
+const speakeasy = require("speakeasy");
+const qrcode = require("qrcode");
+function generate(n) {
+  var add = 1,
+    max = 12 - add;
+  if (n > max) generate(max) + generate(n - max);
+  max = Math.pow(10, n + add);
+  var min = max / 10;
+  var number = Math.floor(Math.random() * (max - min + 1)) + min;
+  return ("" + number).substring(add);
+}
+async function verify2fa(otp) {
+  let result = speakeasy.totp.verify({
+    secret: ":%RoH3T>cTJ:{u*pq4B!2awVvTnD#3Ui",
+    encoding: "ascii",
+    token: otp,
+  });
+  return result;
+}
+async function enable2fa() {
+  let secret = speakeasy.generateSecret({
+    name: "RoundPay",
+  });
+  let url = await qrcode.toDataURL(secret.otpauth_url);
+  return url;
+}
 async function loginM({ email, passward }) {
   try {
     const user = await User.findOne({ email });
@@ -209,19 +235,96 @@ async function updatePasswardM(body) {
 }
 async function securityM(body) {
   try {
+    let message = "";
+    let otp = generate(6);
+    if (body.previous == "none") {
+      message = `Your Auth verification OTP is ${otp}`;
+    } else if (body.previous == "email") {
+      message = `Your Auth verification OTP is ${otp}`;
+    } else {
+      message = "Someone trying to change your security settings";
+    }
+    sendEmail(body.email, "Auth Change verification", message, "#");
     await User.findOneAndUpdate(
       { email: body.email },
-      { security: body.type },
+      { loginOtp: otp },
       {
         returnDocument: "after",
         new: true,
       }
     );
     return {
-      message: { email: body.email, security: body.type },
+      message: "Otp sent",
       success: true,
       token: null,
     };
+  } catch (error) {
+    console.log(error);
+    return {
+      message: error,
+      success: false,
+      token: null,
+    };
+  }
+}
+async function verifysecurityM(body) {
+  try {
+    if (body.previous == "email" || body.previous == "none") {
+      let user = await User.findOne({ email: body.email });
+      if (user.loginOtp == body.otp) {
+        await User.findOneAndUpdate(
+          { email: body.email },
+          { security: body.security },
+          {
+            returnDocument: "after",
+            new: true,
+          }
+        );
+        if (body.security == "2fa") {
+          let twoFA = await enable2fa();
+          return {
+            message: { email: body.email, security: body.security, url: twoFA },
+            success: true,
+            token: null,
+          };
+        } else {
+          return {
+            message: { email: body.email, security: body.security, url: "" },
+            success: true,
+            token: null,
+          };
+        }
+      } else {
+        return {
+          message: "Invalid OTP",
+          success: false,
+          token: null,
+        };
+      }
+    } else {
+      let result = await verify2fa(String(body.otp));
+      if (result) {
+        await User.findOneAndUpdate(
+          { email: body.email },
+          { security: body.security },
+          {
+            returnDocument: "after",
+            new: true,
+          }
+        );
+        return {
+          message: { email: body.email, security: body.security },
+          success: true,
+          token: null,
+        };
+      } else {
+        return {
+          message: "Invalid OTP",
+          success: false,
+          token: null,
+        };
+      }
+    }
   } catch (error) {
     return {
       message: error,
@@ -230,6 +333,7 @@ async function securityM(body) {
     };
   }
 }
+
 module.exports = {
   loginM,
   signupM,
@@ -239,4 +343,5 @@ module.exports = {
   updateProfileM,
   updatePasswardM,
   securityM,
+  verifysecurityM,
 };
