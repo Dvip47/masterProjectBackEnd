@@ -11,6 +11,7 @@ const {
   updatePasswardM,
   securityM,
   verifysecurityM,
+  verifyloginotpM,
 } = require("../models/user.model");
 const { postResquest } = require("../api/api");
 // login
@@ -97,6 +98,12 @@ async function verifysecurityC(req, res) {
     });
   }
 }
+// verify login otp
+async function verifyloginotpC(req, res) {
+  const result = await verifyloginotpM(req.body);
+  logs(req.body, result, "verify login otp");
+  res.json(result).status(200);
+}
 
 module.exports = {
   loginC,
@@ -108,4 +115,5 @@ module.exports = {
   updatePasswardC,
   securityC,
   verifysecurityC,
+  verifyloginotpC,
 };

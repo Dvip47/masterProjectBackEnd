@@ -16,7 +16,7 @@ function generate(n) {
 }
 async function verify2fa(otp) {
   let result = speakeasy.totp.verify({
-    secret: ":%RoH3T>cTJ:{u*pq4B!2awVvTnD#3Ui",
+    secret: ">Nw>X%eWGWg?F#X3#@ZD1<O5/mm%N{p{",
     encoding: "ascii",
     token: otp,
   });
@@ -26,6 +26,7 @@ async function enable2fa() {
   let secret = speakeasy.generateSecret({
     name: "RoundPay",
   });
+  console.log(secret);
   let url = await qrcode.toDataURL(secret.otpauth_url);
   return url;
 }
@@ -35,8 +36,25 @@ async function loginM({ email, passward }) {
     if (user?.name) {
       const validatePassward = await bcrypt.compare(passward, user.passward);
       if (validatePassward) {
-        const token = await setToken(user);
-        return { message: "User indentified", success: true, token };
+        if (user.security == "email") {
+          let otp = generate(6);
+          sendEmail(
+            body.email,
+            "Auth Change verification",
+            `Your Auth verification OTP is ${otp}`,
+            "#"
+          );
+          return { message: "OTP sent", success: true, token: null };
+        } else if (user.security == "2fa") {
+          return {
+            message: "OTP sent to google Authenticator",
+            success: true,
+            token: null,
+          };
+        } else {
+          const token = await setToken(user);
+          return { message: "User indentified", success: true, token };
+        }
       } else {
         return { message: "Invalid details", success: true, token: null };
       }
@@ -333,7 +351,56 @@ async function verifysecurityM(body) {
     };
   }
 }
-
+async function verifyloginotpM(body) {
+  try {
+    const user = await User.findOne({ email: body.email });
+    const token = await setToken(user);
+    if (user.email) {
+      if (user.security == "email") {
+        if (user.loginOtp == body.otp) {
+          return {
+            message: user,
+            success: true,
+            token,
+          };
+        } else {
+          return {
+            message: "Invalid OTP",
+            success: false,
+            token: null,
+          };
+        }
+      } else {
+        let result = await verify2fa(body.otp);
+        if (result) {
+          return {
+            message: user,
+            success: true,
+            token,
+          };
+        } else {
+          return {
+            message: "Invalid OTP",
+            success: false,
+            token: null,
+          };
+        }
+      }
+    } else {
+      return {
+        message: "User not Found",
+        success: false,
+        token: null,
+      };
+    }
+  } catch (error) {
+    return {
+      message: error,
+      success: false,
+      token: null,
+    };
+  }
+}
 module.exports = {
   loginM,
   signupM,
@@ -344,4 +411,5 @@ module.exports = {
   updatePasswardM,
   securityM,
   verifysecurityM,
+  verifyloginotpM,
 };

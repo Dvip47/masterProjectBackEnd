@@ -16,6 +16,7 @@ const loginCelebrate = {
   [Segments.BODY]: Joi.object().keys({
     email: Joi.string().required(),
     passward: Joi.string().required(),
+    otp: Joi.any().required(),
   }),
 };
 const forgetCelebrate = {
@@ -34,7 +35,6 @@ const verifyCelebrate = {
     token: Joi.string().required(),
   }),
 };
-
 // calling functions
 const {
   loginC,
@@ -46,6 +46,7 @@ const {
   updatePasswardC,
   securityC,
   verifysecurityC,
+  verifyloginotpC,
 } = require("../controllers/user.controller");
 UserRouter.post("/signup", celebrate(signupCelebrate), signupC);
 UserRouter.post("/login", celebrate(loginCelebrate), loginC);
@@ -56,4 +57,5 @@ UserRouter.post("/updateProfile", upload.single("image"), updateProfileC);
 UserRouter.post("/updatePassward", updatePasswardC);
 UserRouter.post("/security", securityC);
 UserRouter.post("/verifysecurity", verifysecurityC);
+UserRouter.post("/verifyloginotp", verifyloginotpC);
 module.exports = UserRouter;

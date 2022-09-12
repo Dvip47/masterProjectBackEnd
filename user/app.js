@@ -16,6 +16,7 @@ const UserRouter = require("./src/routes/user.routes");
 const { isMaster, fork } = require("cluster");
 const { cpus } = require("os");
 const cors = require("cors");
+const { isCelebrateError } = require("celebrate");
 // const startSocket = require("./src/web/socket");
 // adding milldlewares
 // Body-parser middleware
@@ -34,7 +35,6 @@ app.use(helmet());
 app.use((err, req, res, next) => {
   let message = err.message;
   if (isCelebrateError(err)) {
-    console.log(err.details.get("body").message);
     if (err.details.get("body")) {
       message = err.details.get("body").message;
       return res.json({ success: false, message });
