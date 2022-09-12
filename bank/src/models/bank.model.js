@@ -1,4 +1,5 @@
 const { postResquestForRP } = require("../api/api");
+const AdminBank = require("../db/schema/AdminBank");
 const Bank = require("../db/schema/Bank.schema");
 
 async function bankM(body) {
@@ -139,8 +140,17 @@ async function utrM(body) {
     return { message: error, success: false, token: null };
   }
 }
+async function addAdminBankM(body) {
+  try {
+    await AdminBank.create(body);
+    return { message: "bank added", success: true, token: null };
+  } catch (error) {
+    return { message: error, success: false, token: null };
+  }
+}
 module.exports = {
   bankM,
   verifyM,
   utrM,
+  addAdminBankM,
 };

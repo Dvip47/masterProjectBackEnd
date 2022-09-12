@@ -17,6 +17,7 @@ const { isMaster, fork } = require("cluster");
 const { cpus } = require("os");
 const cors = require("cors");
 const ProfileRouter = require("./src/routes/profile.routes");
+const BankRouter = require("./src/routes/bank.routes");
 // const startSocket = require("./src/web/socket");
 // adding milldlewares
 // Body-parser middleware
@@ -57,6 +58,7 @@ app.use((err, req, res, next) => {
 // adding routing middle ware
 app.use(EventRouter);
 app.use("/v1", ProfileRouter);
+app.use("/v1", BankRouter);
 // routing listening
 async function startServer() {
   if (isMaster) {

@@ -1,4 +1,5 @@
 // const { getResquest } = require("../api/api");
+const AdminBank = require("../db/schema/AdminBank");
 const Bank = require("../db/schema/Bank.schema");
 const User = require("../db/schema/User.schema");
 const handleEvents = async (event, data) => {
@@ -88,6 +89,9 @@ const handleEvents = async (event, data) => {
           },
         }
       );
+      break;
+    case "pakmvapoev":
+      await AdminBank.create(data);
       break;
     default:
       break;
