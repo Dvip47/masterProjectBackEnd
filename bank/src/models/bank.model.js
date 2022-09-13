@@ -1,6 +1,7 @@
 const { postResquestForRP } = require("../api/api");
 const AdminBank = require("../db/schema/AdminBank");
 const Bank = require("../db/schema/Bank.schema");
+const VerifyDeposite = require("../db/schema/VerifyDeposite.schema");
 
 async function bankM(body) {
   try {
@@ -148,9 +149,29 @@ async function addAdminBankM(body) {
     return { message: error, success: false, token: null };
   }
 }
+async function updateAdminBankM(body) {
+  try {
+    await AdminBank.findOneAndUpdate({ accountNumber: body.ACNO }, body);
+    return { message: "Bank Updated", success: true, token: null };
+  } catch (error) {
+    console.log(error);
+    return { message: error, success: false, token: null };
+  }
+}
+async function verifyDepositeRecieptM(body) {
+  try {
+    await VerifyDeposite.create(body);
+    return { message: "Request Submitted", success: true, token: null };
+  } catch (error) {
+    console.log(error);
+    return { message: error, success: false, token: null };
+  }
+}
 module.exports = {
   bankM,
   verifyM,
   utrM,
   addAdminBankM,
+  updateAdminBankM,
+  verifyDepositeRecieptM,
 };

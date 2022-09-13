@@ -2,7 +2,14 @@
 const { postResquest } = require("../api/api");
 const logs = require("../common/logs.common");
 // calling logic function
-const { bankM, utrM, verifyM, addAdminBankM } = require("../models/bank.model");
+const {
+  bankM,
+  utrM,
+  verifyM,
+  addAdminBankM,
+  updateAdminBankM,
+  verifyDepositeRecieptM,
+} = require("../models/bank.model");
 // kyc
 async function bankC(req, res) {
   const result = await bankM(req.body);
@@ -49,10 +56,36 @@ async function addAdminBankC(req, res) {
     });
   }
 }
+// update admin bank
+async function updateAdminBankC(req, res) {
+  const result = await updateAdminBankM(req.body);
+  logs(req.body, result, "update admin bank");
+  res.json(result).status(200);
+  if (result.success) {
+    await postResquest("event", {
+      event: "asaewepdov",
+      data: req.body,
+    });
+  }
+}
+// update admin bank
+async function verifyDepositeRecieptC(req, res) {
+  const result = await verifyDepositeRecieptM(req.body);
+  logs(req.body, result, "verify reciept");
+  res.json(result).status(200);
+  if (result.success) {
+    await postResquest("event", {
+      event: "paisbvecmso",
+      data: req.body,
+    });
+  }
+}
 
 module.exports = {
   bankC,
   verifyC,
   utrC,
   addAdminBankC,
+  updateAdminBankC,
+  verifyDepositeRecieptC,
 };

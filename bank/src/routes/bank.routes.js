@@ -7,11 +7,15 @@ const {
   bankC,
   verifyC,
   utrC,
+  updateAdminBankC,
   addAdminBankC,
+  verifyDepositeRecieptC,
 } = require("../controllers/bank.controller");
 BankRouter.post("/bank", bankC);
 BankRouter.post("/verify", verifyC);
 BankRouter.post("/utr", utrC);
 BankRouter.post("/addAdminBank", addAdminBankC);
+BankRouter.post("/updateAdminBank", updateAdminBankC);
+BankRouter.post("/verifyDepositeReciept", verifyDepositeRecieptC);
 
 module.exports = BankRouter;
