@@ -17,6 +17,7 @@ const UserSchema = mongoose.Schema(
     uniqueNumber: String,
     kyc: String,
     security: String,
+    role: String,
   },
   { timestamps: true }
 );

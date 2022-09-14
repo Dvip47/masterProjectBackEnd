@@ -15,7 +15,16 @@ async function profileM(body) {
     return { message: error, success: false, token: null };
   }
 }
+async function getAllUserM(body) {
+  try {
+    const getAllUser = await User.find({});
+    return { message: getAllUser, success: true, token: null };
+  } catch (error) {
+    return { message: error, success: false, token: null };
+  }
+}
 
 module.exports = {
   profileM,
+  getAllUserM,
 };

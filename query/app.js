@@ -18,6 +18,7 @@ const { cpus } = require("os");
 const cors = require("cors");
 const ProfileRouter = require("./src/routes/profile.routes");
 const BankRouter = require("./src/routes/bank.routes");
+const DepositeRouter = require("./src/routes/deposite.routes");
 // const startSocket = require("./src/web/socket");
 // adding milldlewares
 // Body-parser middleware
@@ -59,6 +60,7 @@ app.use((err, req, res, next) => {
 app.use(EventRouter);
 app.use("/v1", ProfileRouter);
 app.use("/v1", BankRouter);
+app.use("/v1", DepositeRouter);
 // routing listening
 async function startServer() {
   if (isMaster) {

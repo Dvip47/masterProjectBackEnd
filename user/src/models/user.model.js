@@ -53,7 +53,7 @@ async function loginM({ email, passward }) {
           };
         } else {
           const token = await setToken(user);
-          return { message: "User indentified", success: true, token };
+          return { message: user, success: true, token };
         }
       } else {
         return { message: "Invalid details", success: true, token: null };
@@ -79,6 +79,7 @@ async function signupM(body) {
       verified: false,
       token,
       security: "none",
+      role: "user",
     };
     const user = await User.create(data);
     sendEmail(
