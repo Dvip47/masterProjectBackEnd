@@ -11,6 +11,8 @@ const VerifyDepositeSchema = mongoose.Schema(
     accountNumber: Number,
     bankName: String,
     status: String,
+    type: String,
+    currency: String,
   },
   { timestamps: true }
 );

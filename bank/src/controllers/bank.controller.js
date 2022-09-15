@@ -10,6 +10,7 @@ const {
   updateAdminBankM,
   verifyDepositeRecieptM,
   updateDepositeRecieptM,
+  createWalletM,
 } = require("../models/bank.model");
 // kyc
 async function bankC(req, res) {
@@ -89,7 +90,19 @@ async function updateDepositeRecieptC(req, res) {
   if (result.success) {
     await postResquest("event", {
       event: "pasmcwpocyus",
-      data: result.data,
+      data: req.body,
+    });
+  }
+}
+// update desposite recipt
+async function createWalletC(req, res) {
+  const result = await createWalletM(req.body);
+  logs(req.body, result, "create wallet");
+  res.json(result).status(200);
+  if (result.success) {
+    await postResquest("event", {
+      event: "csjoiwpjo",
+      data: req.body,
     });
   }
 }
@@ -102,4 +115,5 @@ module.exports = {
   updateAdminBankC,
   verifyDepositeRecieptC,
   updateDepositeRecieptC,
+  createWalletC,
 };

@@ -7,7 +7,6 @@ const UserSchema = mongoose.Schema(
     passward: String,
     mobile: Number,
     code: Number,
-    active: Boolean,
     kyc: Boolean,
     verified: Boolean,
     profileImg: String,
@@ -18,6 +17,10 @@ const UserSchema = mongoose.Schema(
     kyc: String,
     security: String,
     role: String,
+    balance: Number,
+    active: Boolean,
+    canDeposite: Boolean,
+    canWithdraw: Boolean,
   },
   { timestamps: true }
 );

@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-
 const VerifyDepositeSchema = mongoose.Schema(
   {
     name: String,
@@ -11,10 +10,10 @@ const VerifyDepositeSchema = mongoose.Schema(
     accountNumber: Number,
     bankName: String,
     status: String,
+    type: String,
+    currency: String,
   },
   { timestamps: true }
 );
-
 const VerifyDeposite = mongoose.model("VerifyDeposite", VerifyDepositeSchema);
-
 module.exports = VerifyDeposite;

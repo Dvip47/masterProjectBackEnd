@@ -135,7 +135,7 @@ async function verifyM(query) {
         $set: { verified: true },
       }
     );
-    return { message: user, success: true, token: null };
+    return { message: "Verified", success: true, token: null };
   } catch (error) {
     return {
       message: error,

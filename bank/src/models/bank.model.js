@@ -3,6 +3,7 @@ const AdminBank = require("../db/schema/AdminBank");
 const Bank = require("../db/schema/Bank.schema");
 const VerifyDeposite = require("../db/schema/VerifyDeposite.schema");
 const uploadDocs = require("../common/image.common");
+const Wallet = require("../db/schema/Wallet.schema");
 async function bankM(body) {
   try {
     await Bank.create(body);
@@ -161,12 +162,22 @@ async function updateAdminBankM(body) {
 async function verifyDepositeRecieptM(req) {
   try {
     const res = await uploadDocs(req);
-    await VerifyDeposite.create({ ...req.body, reciept: res.message });
+    await VerifyDeposite.create({
+      ...req.body,
+      reciept: res.message,
+      type: "money",
+      currency: "inr",
+    });
     return {
       message: "Request Submitted",
       success: true,
       token: null,
-      data: { ...req.body, reciept: res.message },
+      data: {
+        ...req.body,
+        reciept: res.message,
+        type: "money",
+        currency: "inr",
+      },
     };
   } catch (error) {
     return { message: error, success: false, token: null };
@@ -175,11 +186,35 @@ async function verifyDepositeRecieptM(req) {
 async function updateDepositeRecieptM(body) {
   try {
     await VerifyDeposite.findOneAndUpdate(
-      { email: body.email },
+      { utr: body.utr },
       { status: body.status }
     );
     return {
       message: "Request updated",
+      success: true,
+      token: null,
+    };
+  } catch (error) {
+    return { message: error, success: false, token: null };
+  }
+}
+async function createWalletM(body) {
+  try {
+    await Wallet.create({
+      email: body.email,
+      wallet: [
+        {
+          currency: "inr",
+          balance: 0,
+          freezeBalance: 0,
+          total: 0,
+          active: true,
+          date: new Date(),
+        },
+      ],
+    });
+    return {
+      message: "Wallet created",
       success: true,
       token: null,
     };
@@ -196,4 +231,5 @@ module.exports = {
   updateAdminBankM,
   verifyDepositeRecieptM,
   updateDepositeRecieptM,
+  createWalletM,
 };

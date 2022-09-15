@@ -13,6 +13,7 @@ const {
   addAdminBankC,
   verifyDepositeRecieptC,
   updateDepositeRecieptC,
+  createWalletC,
 } = require("../controllers/bank.controller");
 BankRouter.post("/bank", bankC);
 BankRouter.post("/verify", verifyC);
@@ -25,5 +26,6 @@ BankRouter.post(
   verifyDepositeRecieptC
 );
 BankRouter.post("/updateDepositeReciept", updateDepositeRecieptC);
+BankRouter.post("/createWallet", createWalletC);
 
 module.exports = BankRouter;

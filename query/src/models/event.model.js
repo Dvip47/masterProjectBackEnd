@@ -3,10 +3,30 @@ const AdminBank = require("../db/schema/AdminBank");
 const Bank = require("../db/schema/Bank.schema");
 const User = require("../db/schema/User.schema");
 const VerifyDeposite = require("../db/schema/VerifyDepositeReciept.schema");
+const Wallet = require("../db/schema/Wallet.schema");
 const handleEvents = async (event, data) => {
   switch (event) {
     case "zxcvbnm":
-      await User.create(data);
+      await User.create({
+        ...data,
+        balance: 0,
+        active: false,
+        canDeposite: false,
+        canWithdraw: false,
+      });
+      await Wallet.create({
+        email: data.email,
+        wallet: [
+          {
+            currency: "inr",
+            balance: 0,
+            freezeBalance: 0,
+            total: 0,
+            active: true,
+            date: new Date(),
+          },
+        ],
+      });
       break;
     case "sndlknva":
       await User.findOneAndUpdate(
@@ -99,6 +119,47 @@ const handleEvents = async (event, data) => {
       break;
     case "paisbvecmso":
       await VerifyDeposite.create(data);
+      break;
+    case "pasmcwpocyus":
+      await VerifyDeposite.findOneAndUpdate(
+        { utr: data.utr },
+        { status: data.status }
+      );
+      if (data.type != "money") {
+        await Wallet.findOneAndUpdate(
+          {
+            email: data.email,
+            "wallet.$.currency": data.currency,
+          },
+          {
+            $set: {
+              "wallet.$.balance": data.balance,
+              "wallet.$.date": new Date(),
+              "wallet.$.total": data.balance,
+            },
+          }
+        );
+      } else {
+        await User.findOneAndUpdate(
+          { email: data.email },
+          {
+            balance: data.balance,
+          }
+        );
+        await Wallet.findOneAndUpdate(
+          {
+            email: data.email,
+            "wallet.currency": "inr",
+          },
+          {
+            $set: {
+              "wallet.$.balance": data.balance,
+              "wallet.$.date": new Date(),
+              "wallet.$.total": data.balance,
+            },
+          }
+        );
+      }
       break;
     default:
       break;
