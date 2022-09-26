@@ -2,6 +2,7 @@
 const AdminBank = require("../db/schema/AdminBank");
 const Bank = require("../db/schema/Bank.schema");
 const User = require("../db/schema/User.schema");
+const UserLedger = require("../db/schema/UserLedger.schema");
 const VerifyDeposite = require("../db/schema/VerifyDepositeReciept.schema");
 const Wallet = require("../db/schema/Wallet.schema");
 const handleEvents = async (event, data) => {
@@ -118,9 +119,31 @@ const handleEvents = async (event, data) => {
       await AdminBank.findOneAndUpdate({ accountNumber: data.ACNO }, data);
       break;
     case "paisbvecmso":
+      const user = await User.findOne({ email: data.email });
+      const newData = {
+        symbol: "inr",
+        amount: Number(data.deposite),
+        Status: "pending",
+        utrDeduction: 0,
+        finalAmount: Number(data.deposite) - 0,
+        description: "Request for deposite",
+        oldBalance: Number(user.balance),
+        newBalance: Number(user.balance) + Number(data.deposite),
+        type: "money",
+        mode: "deposite",
+        utr: Number(data.utr),
+      };
+      await UserLedger.create(newData);
       await VerifyDeposite.create(data);
       break;
     case "pasmcwpocyus":
+      const oldWallet = await Wallet.findOne({
+        email: data.email,
+      });
+      const oldUser = await User.findOne({ email: data.email });
+      const currencyValue = oldWallet.wallet?.filter(
+        (data) => data.currency == data.currency
+      );
       await VerifyDeposite.findOneAndUpdate(
         { utr: data.utr },
         { status: data.status }
@@ -133,9 +156,9 @@ const handleEvents = async (event, data) => {
           },
           {
             $set: {
-              "wallet.$.balance": data.balance,
+              "wallet.$.balance": currencyValue[0].balance + data.balance,
               "wallet.$.date": new Date(),
-              "wallet.$.total": data.balance,
+              "wallet.$.total": currencyValue[0].total + data.balance,
             },
           }
         );
@@ -143,7 +166,7 @@ const handleEvents = async (event, data) => {
         await User.findOneAndUpdate(
           { email: data.email },
           {
-            balance: data.balance,
+            balance: oldUser.balance + data.balance,
           }
         );
         await Wallet.findOneAndUpdate(
@@ -153,13 +176,16 @@ const handleEvents = async (event, data) => {
           },
           {
             $set: {
-              "wallet.$.balance": data.balance,
+              "wallet.$.balance": currencyValue[0].balance + data.balance,
               "wallet.$.date": new Date(),
-              "wallet.$.total": data.balance,
+              "wallet.$.total": currencyValue[0].total + data.balance,
             },
           }
         );
       }
+      break;
+    case "dspioasp":
+      await User.findOneAndUpdate({ email: data.email }, data);
       break;
     default:
       break;

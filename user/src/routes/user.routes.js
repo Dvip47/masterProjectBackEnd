@@ -47,6 +47,7 @@ const {
   securityC,
   verifysecurityC,
   verifyloginotpC,
+  updateUserStatusC,
 } = require("../controllers/user.controller");
 UserRouter.post("/signup", celebrate(signupCelebrate), signupC);
 UserRouter.post("/login", celebrate(loginCelebrate), loginC);
@@ -58,4 +59,5 @@ UserRouter.post("/updatePassward", updatePasswardC);
 UserRouter.post("/security", securityC);
 UserRouter.post("/verifysecurity", verifysecurityC);
 UserRouter.post("/verifyloginotp", verifyloginotpC);
+UserRouter.post("/updateUserStatus", updateUserStatusC);
 module.exports = UserRouter;

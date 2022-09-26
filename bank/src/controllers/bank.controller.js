@@ -70,7 +70,7 @@ async function updateAdminBankC(req, res) {
     });
   }
 }
-// update admin bank
+// update user amount status
 async function verifyDepositeRecieptC(req, res) {
   const result = await verifyDepositeRecieptM(req);
   logs(req.body, result, "verify reciept");

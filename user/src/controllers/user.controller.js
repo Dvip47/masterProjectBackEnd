@@ -12,6 +12,7 @@ const {
   securityM,
   verifysecurityM,
   verifyloginotpM,
+  updateUserStatusM,
 } = require("../models/user.model");
 const { postResquest } = require("../api/api");
 // login
@@ -104,6 +105,18 @@ async function verifyloginotpC(req, res) {
   logs(req.body, result, "verify login otp");
   res.json(result).status(200);
 }
+// update User Status
+async function updateUserStatusC(req, res) {
+  const result = await updateUserStatusM(req.body);
+  logs(req.body, result, "update user Status");
+  res.json(result).status(200);
+  if (result.success) {
+    await postResquest("event", {
+      event: "dspioasp",
+      data: req.body,
+    });
+  }
+}
 
 module.exports = {
   loginC,
@@ -116,4 +129,5 @@ module.exports = {
   securityC,
   verifysecurityC,
   verifyloginotpC,
+  updateUserStatusC,
 };

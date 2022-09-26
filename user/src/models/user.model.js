@@ -402,6 +402,22 @@ async function verifyloginotpM(body) {
     };
   }
 }
+async function updateUserStatusM(body) {
+  try {
+    await User.findOneAndUpdate({ email: body.email }, body);
+    return {
+      message: "Detail updated",
+      success: true,
+      token: null,
+    };
+  } catch (error) {
+    return {
+      message: error,
+      success: false,
+      token: null,
+    };
+  }
+}
 module.exports = {
   loginM,
   signupM,
@@ -413,4 +429,5 @@ module.exports = {
   securityM,
   verifysecurityM,
   verifyloginotpM,
+  updateUserStatusM,
 };

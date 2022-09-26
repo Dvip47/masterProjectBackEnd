@@ -4,6 +4,7 @@ const Bank = require("../db/schema/Bank.schema");
 const VerifyDeposite = require("../db/schema/VerifyDeposite.schema");
 const uploadDocs = require("../common/image.common");
 const Wallet = require("../db/schema/Wallet.schema");
+const UserLedger = require("../db/schema/UserLedger.schema");
 async function bankM(body) {
   try {
     await Bank.create(body);
