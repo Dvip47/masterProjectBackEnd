@@ -66,6 +66,8 @@ const handleEvents = async (event, data) => {
         { email: data.email },
         {
           $set: {
+            adharNumber: data.adharNumber,
+            panNumber: data.panNumber,
             pan: data.pan,
             adharFront: data.adharFront,
             adharBack: data.adharBack,
@@ -186,6 +188,65 @@ const handleEvents = async (event, data) => {
       break;
     case "dspioasp":
       await User.findOneAndUpdate({ email: data.email }, data);
+      break;
+    case "aeuiryenv":
+      const oldUserr = await Wallet.findOne({ email: data.email });
+      const oldAmount = oldUserr.wallet?.filter(
+        (data) => data.currency == "inr"
+      );
+      await Wallet.findOneAndUpdate(
+        {
+          email: data.email,
+          "wallet.currency": "inr",
+        },
+        {
+          $set: {
+            "wallet.$.balance":
+              Number(oldAmount[0].balance) + Number(data.amount),
+            "wallet.$.date": new Date(),
+            "wallet.$.total": Number(oldAmount[0].total) + Number(data.amount),
+          },
+        }
+      );
+      let userDataa = await User.findOneAndUpdate({ email: data.email }, [
+        {
+          $set: {
+            balance: {
+              $add: ["$balance", Number(data.amount)],
+            },
+          },
+        },
+      ]);
+      const newDataa = {
+        symbol: "inr",
+        amount: Number(data.amount),
+        Status: "pending",
+        utrDeduction: 0,
+        finalAmount: Number(data.amount) - 0,
+        description: "Amount transaffered by Admin",
+        oldBalance: Number(userDataa.balance),
+        newBalance: Number(userDataa.balance) + Number(data.amount),
+        type: "money",
+        mode: "deposite",
+        utr: Number(data.utr),
+      };
+      await UserLedger.create(newDataa);
+      break;
+    case "eoiruencw":
+      await User.findOneAndUpdate(
+        { email: data.email },
+        {
+          $set: { kyc: data.kyc },
+        }
+      );
+      break;
+    case "perfeniue":
+      await Bank.findOneAndUpdate(
+        { email: data.email, accountNumber: data.accountNumber },
+        {
+          $set: { bankActive: false },
+        }
+      );
       break;
     default:
       break;

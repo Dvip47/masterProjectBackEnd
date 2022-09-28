@@ -13,6 +13,7 @@ const {
 
 TransactionRouter.post(
   "/getAllDepositeTransaction",
+  getToken,
   getAllDepositeTransactionC
 );
 

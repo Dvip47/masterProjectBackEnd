@@ -9,6 +9,6 @@ const { getDepositeDataC } = require("../controllers/deposite.controller");
 
 //  get token will validate your jwt token
 
-DepositeRouter.get("/getDepositeData", getDepositeDataC);
+DepositeRouter.get("/getDepositeData", getToken, getDepositeDataC);
 
 module.exports = DepositeRouter;

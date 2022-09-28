@@ -5,11 +5,12 @@ const VerifyDeposite = require("../db/schema/VerifyDeposite.schema");
 const uploadDocs = require("../common/image.common");
 const Wallet = require("../db/schema/Wallet.schema");
 const UserLedger = require("../db/schema/UserLedger.schema");
+const sendEmail = require("../common/email.common");
 async function bankM(body) {
   try {
     await Bank.create(body);
     return {
-      message: body,
+      message: "Bank step 1 cleared",
       success: true,
       token: null,
     };
@@ -186,12 +187,20 @@ async function verifyDepositeRecieptM(req) {
 }
 async function updateDepositeRecieptM(body) {
   try {
-    await VerifyDeposite.findOneAndUpdate(
+    let response = await VerifyDeposite.findOneAndUpdate(
       { utr: body.utr },
       { status: body.status }
     );
+    let message = "";
+    if (body.status == "approve") {
+      message = `Your amount of ${body.balance} is deposited`;
+    } else {
+      message = `Your amount of ${body.balance} is not deposited`;
+    }
+    sendEmail(body.email, "Deposite Update", message);
     return {
       message: "Request updated",
+      data: response,
       success: true,
       token: null,
     };
@@ -223,6 +232,53 @@ async function createWalletM(body) {
     return { message: error, success: false, token: null };
   }
 }
+async function transfferAmountFromAdminM(body) {
+  try {
+    const oldUser = await Wallet.findOne({ email: body.email });
+    const oldAmount = oldUser.wallet?.filter((data) => data.currency == "inr");
+    await Wallet.findOneAndUpdate(
+      {
+        email: body.email,
+        "wallet.currency": "inr",
+      },
+      {
+        $set: {
+          "wallet.$.balance":
+            Number(oldAmount[0].balance) + Number(body.amount),
+          "wallet.$.date": new Date(),
+          "wallet.$.total": Number(oldAmount[0].total) + Number(body.amount),
+        },
+      }
+    );
+    return {
+      message: "Amount transfffered",
+      success: true,
+      token: null,
+    };
+  } catch (error) {
+    console.log(error);
+    return { message: error, success: false, token: null };
+  }
+}
+async function removeBankM(body) {
+  try {
+    await Bank.findOneAndUpdate(
+      { email: body.email, accountNumber: body.accountNumber },
+      {
+        $set: {
+          bankActive: false,
+        },
+      }
+    );
+    return {
+      message: "Bank removed",
+      success: true,
+      token: null,
+    };
+  } catch (error) {
+    return { message: error, success: false, token: null };
+  }
+}
 
 module.exports = {
   bankM,
@@ -233,4 +289,6 @@ module.exports = {
   verifyDepositeRecieptM,
   updateDepositeRecieptM,
   createWalletM,
+  transfferAmountFromAdminM,
+  removeBankM,
 };

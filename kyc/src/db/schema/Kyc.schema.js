@@ -8,6 +8,8 @@ const KycSchema = mongoose.Schema(
     kyc: String,
     pan: String,
     uniqueNumber: String,
+    panNumber: String,
+    adharNumber: Number,
   },
   { timestamps: true }
 );

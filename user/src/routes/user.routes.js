@@ -49,15 +49,21 @@ const {
   verifyloginotpC,
   updateUserStatusC,
 } = require("../controllers/user.controller");
+const { getToken } = require("../auth/jwt/jwt");
 UserRouter.post("/signup", celebrate(signupCelebrate), signupC);
 UserRouter.post("/login", celebrate(loginCelebrate), loginC);
 UserRouter.post("/forget", celebrate(forgetCelebrate), forgetC);
 UserRouter.get("/verify", celebrate(verifyCelebrate), verifyC);
 UserRouter.post("/reset", celebrate(resetCelebrate), resetC);
-UserRouter.post("/updateProfile", upload.single("image"), updateProfileC);
-UserRouter.post("/updatePassward", updatePasswardC);
-UserRouter.post("/security", securityC);
-UserRouter.post("/verifysecurity", verifysecurityC);
+UserRouter.post(
+  "/updateProfile",
+  upload.single("image"),
+  getToken,
+  updateProfileC
+);
+UserRouter.post("/updatePassward", getToken, updatePasswardC);
+UserRouter.post("/security", getToken, securityC);
+UserRouter.post("/verifysecurity", getToken, verifysecurityC);
 UserRouter.post("/verifyloginotp", verifyloginotpC);
-UserRouter.post("/updateUserStatus", updateUserStatusC);
+UserRouter.post("/updateUserStatus", getToken, updateUserStatusC);
 module.exports = UserRouter;

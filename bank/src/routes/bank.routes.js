@@ -14,18 +14,27 @@ const {
   verifyDepositeRecieptC,
   updateDepositeRecieptC,
   createWalletC,
+  transfferAmountFromAdminC,
+  removeBankC,
 } = require("../controllers/bank.controller");
-BankRouter.post("/bank", bankC);
-BankRouter.post("/verify", verifyC);
-BankRouter.post("/utr", utrC);
-BankRouter.post("/addAdminBank", addAdminBankC);
-BankRouter.post("/updateAdminBank", updateAdminBankC);
+BankRouter.post("/bank", getToken, bankC);
+BankRouter.post("/verify", getToken, verifyC);
+BankRouter.post("/utr", getToken, utrC);
+BankRouter.post("/addAdminBank", getToken, addAdminBankC);
+BankRouter.post("/updateAdminBank", getToken, updateAdminBankC);
 BankRouter.post(
   "/verifyDepositeReciept",
   upload.single("reciept"),
+  getToken,
   verifyDepositeRecieptC
 );
-BankRouter.post("/updateDepositeReciept", updateDepositeRecieptC);
-BankRouter.post("/createWallet", createWalletC);
+BankRouter.post("/updateDepositeReciept", getToken, updateDepositeRecieptC);
+BankRouter.post("/createWallet", getToken, createWalletC);
+BankRouter.post(
+  "/transfferAmountFromAdmin",
+  getToken,
+  transfferAmountFromAdminC
+);
+BankRouter.post("/removeBank", getToken, removeBankC);
 
 module.exports = BankRouter;

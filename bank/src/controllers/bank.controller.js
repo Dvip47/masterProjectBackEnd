@@ -11,6 +11,8 @@ const {
   verifyDepositeRecieptM,
   updateDepositeRecieptM,
   createWalletM,
+  transfferAmountFromAdminM,
+  removeBankM,
 } = require("../models/bank.model");
 // kyc
 async function bankC(req, res) {
@@ -20,7 +22,7 @@ async function bankC(req, res) {
   if (result.success) {
     await postResquest("event", {
       event: "fseifjwo",
-      data: result.message,
+      data: req.body,
     });
   }
 }
@@ -106,6 +108,30 @@ async function createWalletC(req, res) {
     });
   }
 }
+//  transffer amount
+async function transfferAmountFromAdminC(req, res) {
+  const result = await transfferAmountFromAdminM(req.body);
+  logs(req.body, result, "Transaffer Amount");
+  res.json(result).status(200);
+  if (result.success) {
+    await postResquest("event", {
+      event: "aeuiryenv",
+      data: req.body,
+    });
+  }
+}
+//  Remove bank
+async function removeBankC(req, res) {
+  const result = await removeBankM(req.body);
+  logs(req.body, result, "Remove Bank");
+  res.json(result).status(200);
+  if (result.success) {
+    await postResquest("event", {
+      event: "perfeniue",
+      data: req.body,
+    });
+  }
+}
 
 module.exports = {
   bankC,
@@ -116,4 +142,6 @@ module.exports = {
   verifyDepositeRecieptC,
   updateDepositeRecieptC,
   createWalletC,
+  transfferAmountFromAdminC,
+  removeBankC,
 };

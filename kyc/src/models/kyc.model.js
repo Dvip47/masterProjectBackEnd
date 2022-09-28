@@ -44,9 +44,38 @@ const uploadDocs = async (req) => {
 async function kycM(req) {
   try {
     let res = await uploadDocs(req);
-    await Kyc.create({ email: req.body.email, ...res.message });
+    await Kyc.create({
+      email: req.body.email,
+      ...res.message,
+      adharNumber: Number(req.body.adharNumber),
+      panNumber: req.body.panNumber,
+    });
     return {
-      message: { email: req.body.email, ...res.message },
+      message: {
+        email: req.body.email,
+        ...res.message,
+        adharNumber: Number(req.body.adharNumber),
+        panNumber: req.body.panNumber,
+      },
+      success: true,
+      token: null,
+    };
+  } catch (error) {
+    return { message: error, success: false, token: null };
+  }
+}
+async function updateKycM(body) {
+  try {
+    await Kyc.findOneAndUpdate(
+      { email: body.email },
+      {
+        $set: {
+          kyc: body.kyc,
+        },
+      }
+    );
+    return {
+      message: "KYC Updated",
       success: true,
       token: null,
     };
@@ -57,4 +86,5 @@ async function kycM(req) {
 
 module.exports = {
   kycM,
+  updateKycM,
 };

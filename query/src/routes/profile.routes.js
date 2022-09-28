@@ -9,7 +9,7 @@ const { profileC, getAllUserC } = require("../controllers/profile.controller");
 
 //  get token will validate your jwt token
 
-ProfileRouter.post("/profile", profileC);
-ProfileRouter.get("/getAllUser", getAllUserC);
+ProfileRouter.post("/profile", getToken, profileC);
+ProfileRouter.get("/getAllUser", getToken, getAllUserC);
 
 module.exports = ProfileRouter;

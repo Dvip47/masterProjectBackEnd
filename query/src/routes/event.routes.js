@@ -9,7 +9,7 @@ const { eventC, eventC_P } = require("../controllers/event.controller");
 
 //  get token will validate your jwt token
 
-EventRouter.get("/event", eventC);
-EventRouter.post("/event", eventC_P);
+EventRouter.get("/event", getToken, eventC);
+EventRouter.post("/event", getToken, eventC_P);
 
 module.exports = EventRouter;

@@ -21,6 +21,8 @@ const UserSchema = mongoose.Schema(
     active: Boolean,
     canDeposite: Boolean,
     canWithdraw: Boolean,
+    panNumber: String,
+    adharNumber: Number,
   },
   { timestamps: true }
 );
