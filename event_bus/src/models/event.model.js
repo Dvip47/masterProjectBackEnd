@@ -3,6 +3,7 @@ const Queue = require("../db/schema/Queue.schema");
 async function eventM_P({ event, data }) {
   try {
     const res = await postResquest("event", { event, data });
+    console.log(res.data);
     if (res.data?.success) {
       return { message: "done", success: true, token: null };
     } else {
@@ -14,6 +15,7 @@ async function eventM_P({ event, data }) {
       };
     }
   } catch (error) {
+    console.log(error);
     return { message: error, success: false, token: null };
   }
 }

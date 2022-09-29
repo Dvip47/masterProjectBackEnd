@@ -17,16 +17,11 @@ const handleEvents = async (event, data) => {
       });
       await Wallet.create({
         email: data.email,
-        wallet: [
-          {
-            currency: "inr",
-            balance: 0,
-            freezeBalance: 0,
-            total: 0,
-            active: true,
-            date: new Date(),
-          },
-        ],
+        currency: "INR",
+        balance: 0,
+        freezeAmount: 0,
+        total: 0,
+        active: true,
       });
       break;
     case "sndlknva":
@@ -123,6 +118,7 @@ const handleEvents = async (event, data) => {
     case "paisbvecmso":
       const user = await User.findOne({ email: data.email });
       const newData = {
+        email: data.email,
         symbol: "inr",
         amount: Number(data.deposite),
         Status: "pending",
@@ -190,24 +186,24 @@ const handleEvents = async (event, data) => {
       await User.findOneAndUpdate({ email: data.email }, data);
       break;
     case "aeuiryenv":
-      const oldUserr = await Wallet.findOne({ email: data.email });
-      const oldAmount = oldUserr.wallet?.filter(
-        (data) => data.currency == "inr"
-      );
-      await Wallet.findOneAndUpdate(
+      let pipeline = [
         {
-          email: data.email,
-          "wallet.currency": "inr",
+          $match: {
+            email: data.email,
+          },
         },
         {
           $set: {
-            "wallet.$.balance":
-              Number(oldAmount[0].balance) + Number(data.amount),
-            "wallet.$.date": new Date(),
-            "wallet.$.total": Number(oldAmount[0].total) + Number(data.amount),
+            balance: {
+              $add: ["$balance", Number(data.amount)],
+            },
+            total: {
+              $add: ["$total", Number(data.amount)],
+            },
           },
-        }
-      );
+        },
+      ];
+      await Wallet.aggregate(pipeline);
       let userDataa = await User.findOneAndUpdate({ email: data.email }, [
         {
           $set: {
@@ -218,6 +214,7 @@ const handleEvents = async (event, data) => {
         },
       ]);
       const newDataa = {
+        email: data.email,
         symbol: "inr",
         amount: Number(data.amount),
         Status: "pending",

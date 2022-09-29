@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const UserLedgerSchema = mongoose.Schema(
   {
+    email: String,
     symbol: String,
     amount: Number,
     Status: String,

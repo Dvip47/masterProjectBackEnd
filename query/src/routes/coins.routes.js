@@ -6,6 +6,7 @@ const { getToken } = require("../auth/jwt/jwt");
 const {
   getAllCoinC,
   updatePermissionC,
+  getCoinBalanceC,
 } = require("../controllers/coin.controller");
 
 // Get game list
@@ -14,4 +15,5 @@ const {
 
 CoinRouter.get("/getAllCoin", getToken, getAllCoinC);
 CoinRouter.post("/updatePermission", getToken, updatePermissionC);
+CoinRouter.post("/getCoinBalance", getToken, getCoinBalanceC);
 module.exports = CoinRouter;

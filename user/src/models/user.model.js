@@ -82,14 +82,15 @@ async function signupM(body) {
       role: "user",
     };
     const user = await User.create(data);
-    sendEmail(
-      body.email,
-      "Verify your email",
-      "Click here to verify email !",
-      `http://localhost:5000/user/v1/verify?token=${token}`
-    );
+    // sendEmail(
+    //   body.email,
+    //   "Verify your email",
+    //   "Click here to verify email !",
+    //   `http://localhost:5000/user/v1/verify?token=${token}`
+    // );
     return { message: user, success: true, token: null };
   } catch (error) {
+    console.log(error);
     return {
       message: error,
       success: false,

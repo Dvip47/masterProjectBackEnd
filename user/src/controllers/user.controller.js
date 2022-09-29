@@ -27,7 +27,10 @@ async function signupC(req, res) {
   logs(req.body, result, "signup");
   res.json(result).status(200);
   if (result.success) {
-    await postResquest("event", { event: "zxcvbnm", data: result.message });
+    await postResquest("event", {
+      event: "zxcvbnm",
+      data: result.message,
+    });
   }
 }
 // forget

@@ -13,7 +13,7 @@ async function getbanklistM() {
 }
 async function getWalletM(body) {
   try {
-    const walletList = await Wallet.findOne({ email: body.email });
+    const walletList = await Wallet.find({ email: body.email });
     return { message: walletList, success: true, token: null };
   } catch (error) {
     console.log(error);

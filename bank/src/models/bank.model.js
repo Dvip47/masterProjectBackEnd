@@ -4,7 +4,6 @@ const Bank = require("../db/schema/Bank.schema");
 const VerifyDeposite = require("../db/schema/VerifyDeposite.schema");
 const uploadDocs = require("../common/image.common");
 const Wallet = require("../db/schema/Wallet.schema");
-const UserLedger = require("../db/schema/UserLedger.schema");
 const sendEmail = require("../common/email.common");
 async function bankM(body) {
   try {
@@ -212,16 +211,11 @@ async function createWalletM(body) {
   try {
     await Wallet.create({
       email: body.email,
-      wallet: [
-        {
-          currency: "inr",
-          balance: 0,
-          freezeBalance: 0,
-          total: 0,
-          active: true,
-          date: new Date(),
-        },
-      ],
+      currency: "INR",
+      balance: 0,
+      freezeAmount: 0,
+      total: 0,
+      active: true,
     });
     return {
       message: "Wallet created",
@@ -234,22 +228,42 @@ async function createWalletM(body) {
 }
 async function transfferAmountFromAdminM(body) {
   try {
-    const oldUser = await Wallet.findOne({ email: body.email });
-    const oldAmount = oldUser.wallet?.filter((data) => data.currency == "inr");
-    await Wallet.findOneAndUpdate(
+    // const oldUser = await Wallet.findOne({ email: body.email });
+    // const oldAmount = oldUser.wallet?.filter((data) => data.currency == "inr");
+    // await Wallet.findOneAndUpdate(
+    //   {
+    //     email: body.email,
+    //     "wallet.currency": "inr",
+    //   },
+    //   {
+    //     $set: {
+    //       "wallet.$.balance":
+    //         Number(oldAmount[0].balance) + Number(body.amount),
+    //       "wallet.$.date": new Date(),
+    //       "wallet.$.total": Number(oldAmount[0].total) + Number(body.amount),
+    //     },
+    //   }
+    // );
+
+    let pipeline = [
       {
-        email: body.email,
-        "wallet.currency": "inr",
+        $match: {
+          email: body.email,
+        },
       },
       {
         $set: {
-          "wallet.$.balance":
-            Number(oldAmount[0].balance) + Number(body.amount),
-          "wallet.$.date": new Date(),
-          "wallet.$.total": Number(oldAmount[0].total) + Number(body.amount),
+          balance: {
+            $add: ["$balance", Number(body.amount)],
+          },
+          total: {
+            $add: ["$total", Number(body.amount)],
+          },
         },
-      }
-    );
+      },
+    ];
+
+    await Wallet.aggregate(pipeline);
     return {
       message: "Amount transfffered",
       success: true,

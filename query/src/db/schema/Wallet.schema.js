@@ -3,7 +3,11 @@ const mongoose = require("mongoose");
 const walletSchema = mongoose.Schema(
   {
     email: String,
-    wallet: [],
+    currency: String,
+    active: Boolean,
+    balance: Number,
+    freezeAmount: Number,
+    total: Number,
   },
   { timestamps: true }
 );
