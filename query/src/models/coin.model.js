@@ -1,5 +1,6 @@
 const bodyParser = require("body-parser");
 const Coinlisting = require("../db/schema/Coinslisting.schema");
+const Wallet = require("../db/schema/Wallet.schema");
 async function getAllCoinM() {
   try {
     const coinList = await Coinlisting.find({});
@@ -81,8 +82,26 @@ async function getCoinBalanceM(body) {
         },
       },
     ];
+    let pipeline2 = [
+      {
+        $match: {
+          email: body.email,
+          currency: "INR",
+        },
+      },
+    ];
     let coins = await Coinlisting.aggregate(pipeline);
-    console.log(coins[0]);
+    let wallet = await Wallet.aggregate(pipeline2);
+    let newObj = {
+      symbol: "INR",
+      canDeposit: true,
+      canWithdrawal: true,
+      contractAddress: "",
+      network: "",
+      balance: wallet[0].balance,
+      total: wallet[0].total,
+    };
+    coins.push(newObj);
     return { message: coins, success: true, token: null };
   } catch (error) {
     return { message: error, success: false, token: null };

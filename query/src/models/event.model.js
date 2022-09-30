@@ -119,7 +119,7 @@ const handleEvents = async (event, data) => {
       const user = await User.findOne({ email: data.email });
       const newData = {
         email: data.email,
-        symbol: "inr",
+        symbol: "INR",
         amount: Number(data.deposite),
         Status: "pending",
         utrDeduction: 0,
@@ -215,7 +215,7 @@ const handleEvents = async (event, data) => {
       ]);
       const newDataa = {
         email: data.email,
-        symbol: "inr",
+        symbol: "INR",
         amount: Number(data.amount),
         Status: "pending",
         utrDeduction: 0,
