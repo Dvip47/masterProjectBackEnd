@@ -135,51 +135,57 @@ const handleEvents = async (event, data) => {
       await VerifyDeposite.create(data);
       break;
     case "pasmcwpocyus":
-      const oldWallet = await Wallet.findOne({
-        email: data.email,
-      });
-      const oldUser = await User.findOne({ email: data.email });
-      const currencyValue = oldWallet.wallet?.filter(
-        (data) => data.currency == data.currency
-      );
       await VerifyDeposite.findOneAndUpdate(
         { utr: data.utr },
-        { status: data.status }
+        {
+          status: data.status,
+          description: data.description,
+          actionTaken: data.actionTaken,
+          ip: data.ip,
+        }
       );
-      if (data.type != "money") {
-        await Wallet.findOneAndUpdate(
+      if (data.status == "reject") {
+        await UserLedger.findOneAndUpdate(
+          { utr: data.utr },
           {
-            email: data.email,
-            "wallet.$.currency": data.currency,
-          },
-          {
-            $set: {
-              "wallet.$.balance": currencyValue[0].balance + data.balance,
-              "wallet.$.date": new Date(),
-              "wallet.$.total": currencyValue[0].total + data.balance,
-            },
+            Status: "reject",
           }
         );
       } else {
-        await User.findOneAndUpdate(
-          { email: data.email },
-          {
-            balance: oldUser.balance + data.balance,
-          }
-        );
-        await Wallet.findOneAndUpdate(
-          {
-            email: data.email,
-            "wallet.currency": "inr",
-          },
+        let pipeline1 = [
           {
             $set: {
-              "wallet.$.balance": currencyValue[0].balance + data.balance,
-              "wallet.$.date": new Date(),
-              "wallet.$.total": currencyValue[0].total + data.balance,
+              balance: {
+                $add: ["$balance", Number(data.balance)],
+              },
+              total: {
+                $add: ["$total", Number(data.balance)],
+              },
             },
+          },
+        ];
+        await Wallet.updateOne(
+          { email: data.email, currency: data.currency },
+          pipeline1
+        );
+        await UserLedger.findOneAndUpdate(
+          { utr: data.utr },
+          {
+            Status: "approve",
           }
         );
+        if (data.type == "money") {
+          let pipeline = [
+            {
+              $set: {
+                balance: {
+                  $add: ["$balance", Number(data.balance)],
+                },
+              },
+            },
+          ];
+          await User.updateOne({ email: data.email }, pipeline);
+        }
       }
       break;
     case "dspioasp":
@@ -187,11 +193,6 @@ const handleEvents = async (event, data) => {
       break;
     case "aeuiryenv":
       let pipeline = [
-        {
-          $match: {
-            email: data.email,
-          },
-        },
         {
           $set: {
             balance: {
@@ -203,8 +204,11 @@ const handleEvents = async (event, data) => {
           },
         },
       ];
-      await Wallet.aggregate(pipeline);
-      let userDataa = await User.findOneAndUpdate({ email: data.email }, [
+      await Wallet.updateOne(
+        { email: data.email, currency: data.currency },
+        pipeline
+      );
+      await User.updateOne({ email: data.email }, [
         {
           $set: {
             balance: {
@@ -213,19 +217,22 @@ const handleEvents = async (event, data) => {
           },
         },
       ]);
+      const userData = await User.findOne({ email: data.email });
       const newDataa = {
         email: data.email,
         symbol: "INR",
         amount: Number(data.amount),
-        Status: "pending",
+        Status: "approve",
         utrDeduction: 0,
         finalAmount: Number(data.amount) - 0,
-        description: "Amount transaffered by Admin",
-        oldBalance: Number(userDataa.balance),
-        newBalance: Number(userDataa.balance) + Number(data.amount),
+        description: data?.description,
+        oldBalance: Number(userData.balance),
+        newBalance: Number(userData.balance) + Number(data.amount),
         type: "money",
         mode: "deposite",
         utr: Number(data.utr),
+        actionTaken: data.actionTaken,
+        ip: data.ip,
       };
       await UserLedger.create(newDataa);
       break;

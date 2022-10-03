@@ -184,19 +184,40 @@ async function verifyDepositeRecieptM(req) {
     return { message: error, success: false, token: null };
   }
 }
-async function updateDepositeRecieptM(body) {
+async function updateDepositeRecieptM(body, ip) {
   try {
     let response = await VerifyDeposite.findOneAndUpdate(
       { utr: body.utr },
-      { status: body.status }
+      {
+        status: body.status,
+        description: body.description,
+        actionTaken: body.actionTaken,
+        ip,
+      }
     );
     let message = "";
     if (body.status == "approve") {
+      let pipeline = [
+        {
+          $set: {
+            balance: {
+              $add: ["$balance", Number(body.balance)],
+            },
+            total: {
+              $add: ["$total", Number(body.balance)],
+            },
+          },
+        },
+      ];
+      await Wallet.updateOne(
+        { email: body.email, currency: body.currency },
+        pipeline
+      );
       message = `Your amount of ${body.balance} is deposited`;
     } else {
       message = `Your amount of ${body.balance} is not deposited`;
     }
-    sendEmail(body.email, "Deposite Update", message);
+    // sendEmail(body.email, "Deposite Update", message);
     return {
       message: "Request updated",
       data: response,
@@ -228,29 +249,7 @@ async function createWalletM(body) {
 }
 async function transfferAmountFromAdminM(body) {
   try {
-    // const oldUser = await Wallet.findOne({ email: body.email });
-    // const oldAmount = oldUser.wallet?.filter((data) => data.currency == "inr");
-    // await Wallet.findOneAndUpdate(
-    //   {
-    //     email: body.email,
-    //     "wallet.currency": "inr",
-    //   },
-    //   {
-    //     $set: {
-    //       "wallet.$.balance":
-    //         Number(oldAmount[0].balance) + Number(body.amount),
-    //       "wallet.$.date": new Date(),
-    //       "wallet.$.total": Number(oldAmount[0].total) + Number(body.amount),
-    //     },
-    //   }
-    // );
-
     let pipeline = [
-      {
-        $match: {
-          email: body.email,
-        },
-      },
       {
         $set: {
           balance: {
@@ -263,14 +262,16 @@ async function transfferAmountFromAdminM(body) {
       },
     ];
 
-    await Wallet.aggregate(pipeline);
+    await Wallet.updateOne(
+      { email: body.email, currency: body.currency },
+      pipeline
+    );
     return {
       message: "Amount transfffered",
       success: true,
       token: null,
     };
   } catch (error) {
-    console.log(error);
     return { message: error, success: false, token: null };
   }
 }

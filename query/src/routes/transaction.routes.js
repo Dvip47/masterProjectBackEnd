@@ -6,16 +6,18 @@ const { getToken } = require("../auth/jwt/jwt");
 const {
   getAllDepositeTransactionC,
   getAllCoinTransactionC,
+  getAllDepositeTransactionMForAdminC,
 } = require("../controllers/transaction.controller");
-
-// Get game list
-
-//  get token will validate your jwt token
 
 TransactionRouter.post(
   "/getAllDepositeTransaction",
   getToken,
   getAllDepositeTransactionC
+);
+TransactionRouter.get(
+  "/getAllDepositeTransactionMForAdmin",
+  getToken,
+  getAllDepositeTransactionMForAdminC
 );
 TransactionRouter.post(
   "/getAllCoinTransaction",

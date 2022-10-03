@@ -12,6 +12,9 @@ const VerifyDepositeSchema = mongoose.Schema(
     status: String,
     type: String,
     currency: String,
+    actionTaken: String,
+    description: String,
+    ip: String,
   },
   { timestamps: true }
 );

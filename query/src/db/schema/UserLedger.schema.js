@@ -14,6 +14,9 @@ const UserLedgerSchema = mongoose.Schema(
     type: String,
     utr: Number,
     mode: String,
+    actionTaken: String,
+    description: String,
+    ip: String,
   },
   { timestamps: true }
 );

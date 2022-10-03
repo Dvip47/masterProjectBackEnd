@@ -4,10 +4,16 @@
 const {
   getAllDepositeTransactionM,
   getAllCoinTransactionM,
+  getAllDepositeTransactionMForAdminM,
 } = require("../models/transaction.model");
-// get all deposite transaction
+// get all deposite transaction for users
 async function getAllDepositeTransactionC(req, res) {
   const result = await getAllDepositeTransactionM(req.body);
+  return res.json(result).status(200);
+}
+// get all deposite transaction for admin
+async function getAllDepositeTransactionMForAdminC(req, res) {
+  const result = await getAllDepositeTransactionMForAdminM(req.body);
   return res.json(result).status(200);
 }
 // get all currency transaction report
@@ -19,4 +25,5 @@ async function getAllCoinTransactionC(req, res) {
 module.exports = {
   getAllDepositeTransactionC,
   getAllCoinTransactionC,
+  getAllDepositeTransactionMForAdminC,
 };

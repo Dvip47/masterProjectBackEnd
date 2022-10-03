@@ -28,7 +28,16 @@ async function getAllCoinTransactionM(body) {
   }
 }
 
+async function getAllDepositeTransactionMForAdminM(body) {
+  try {
+    const ledger = await UserLedger.find({});
+    return { message: ledger, success: true, token: null };
+  } catch (error) {
+    return { message: error, success: false, token: null };
+  }
+}
 module.exports = {
   getAllDepositeTransactionM,
   getAllCoinTransactionM,
+  getAllDepositeTransactionMForAdminM,
 };

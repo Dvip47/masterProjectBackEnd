@@ -86,13 +86,13 @@ async function verifyDepositeRecieptC(req, res) {
 }
 // update desposite recipt
 async function updateDepositeRecieptC(req, res) {
-  const result = await updateDepositeRecieptM(req.body);
+  const result = await updateDepositeRecieptM(req.body, req.ip);
   logs(req.body, result, "update reciept");
   res.json(result).status(200);
   if (result.success) {
     await postResquest("event", {
       event: "pasmcwpocyus",
-      data: req.body,
+      data: { ...req.body, ip: req.ip },
     });
   }
 }
@@ -116,7 +116,7 @@ async function transfferAmountFromAdminC(req, res) {
   if (result.success) {
     await postResquest("event", {
       event: "aeuiryenv",
-      data: req.body,
+      data: { ...req.body, ip: req.ip },
     });
   }
 }
