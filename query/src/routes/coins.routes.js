@@ -13,7 +13,7 @@ const {
 
 //  get token will validate your jwt token
 
-CoinRouter.get("/getAllCoin", getToken, getAllCoinC);
+CoinRouter.get("/getAllCoin", getAllCoinC);
 CoinRouter.post("/updatePermission", getToken, updatePermissionC);
 CoinRouter.post("/getCoinBalance", getToken, getCoinBalanceC);
 module.exports = CoinRouter;

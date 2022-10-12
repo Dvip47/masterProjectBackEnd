@@ -27,7 +27,6 @@ async function getAllCoinTransactionM(body) {
     return { message: error, success: false, token: null };
   }
 }
-
 async function getAllDepositeTransactionMForAdminM(body) {
   try {
     const ledger = await UserLedger.find({});

@@ -81,6 +81,7 @@ async function signupM(body) {
       security: "none",
       role: "user",
     };
+
     const user = await User.create(data);
     // sendEmail(
     //   body.email,
