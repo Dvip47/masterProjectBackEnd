@@ -15,7 +15,9 @@ const bodyparser = require("body-parser");
 const TestRouter = require("./src/routes/test.routes");
 const { isMaster, fork } = require("cluster");
 const { cpus } = require("os");
+const cors = require("cors");
 const startSocket = require("./src/web/socket");
+const OrderRouter = require("./src/routes/order.routes");
 // adding milldlewares
 // Body-parser middleware
 app.use(bodyparser.urlencoded({ extended: false }));
@@ -30,6 +32,12 @@ app.use(
   })
 );
 app.use(helmet());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 // result of request validation
 app.use((err, req, res, next) => {
   let message = err.message;
@@ -55,19 +63,19 @@ app.use((err, req, res, next) => {
 startSocket(socket);
 // adding routing middle ware
 app.use("/v1/test", TestRouter);
+app.use("/v1", OrderRouter);
 // routing listening
 async function startServer() {
-  // if (isMaster) {
-  //   for (let i = 0; i < cpus().length; i++) {
-  //     fork();
-  //   }
-  //   console.log("master started");
-  // } else {
-
-  await startDb();
-  server.listen(port, () => {
-    console.log("Server running on port", port);
-  });
-  // }
+  if (isMaster) {
+    for (let i = 0; i < cpus().length; i++) {
+      fork();
+    }
+    console.log("master started");
+  } else {
+    await startDb();
+    server.listen(port, () => {
+      console.log("Server running on port", port);
+    });
+  }
 }
 startServer();

@@ -1,4 +1,5 @@
 // const { getResquest } = require("../api/api");
+const Order = require("../db/schema/Order.schema");
 const AdminBank = require("../db/schema/AdminBank");
 const Bank = require("../db/schema/Bank.schema");
 const User = require("../db/schema/User.schema");
@@ -251,6 +252,9 @@ const handleEvents = async (event, data) => {
           $set: { bankActive: false },
         }
       );
+      break;
+    case "ewuychucs":
+      await Order.create(data);
       break;
     default:
       break;

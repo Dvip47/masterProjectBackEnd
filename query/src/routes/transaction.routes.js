@@ -6,7 +6,9 @@ const { getToken } = require("../auth/jwt/jwt");
 const {
   getAllDepositeTransactionC,
   getAllCoinTransactionC,
-  getAllDepositeTransactionMForAdminC,
+  adminLedgerC,
+  getAllDepositeDataC,
+  getAllLedgerDataC,
 } = require("../controllers/transaction.controller");
 
 TransactionRouter.post(
@@ -14,15 +16,12 @@ TransactionRouter.post(
   getToken,
   getAllDepositeTransactionC
 );
-TransactionRouter.get(
-  "/getAllDepositeTransactionMForAdmin",
-  getToken,
-  getAllDepositeTransactionMForAdminC
-);
+TransactionRouter.get("/adminLedger", getToken, adminLedgerC);
 TransactionRouter.post(
   "/getAllCoinTransaction",
   getToken,
   getAllCoinTransactionC
 );
-
+TransactionRouter.get("/getAllDepositeData", getToken, getAllDepositeDataC);
+TransactionRouter.get("/getAllLedgerData", getToken, getAllLedgerDataC);
 module.exports = TransactionRouter;

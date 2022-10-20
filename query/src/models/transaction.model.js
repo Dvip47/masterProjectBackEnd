@@ -1,4 +1,5 @@
 const UserLedger = require("../db/schema/UserLedger.schema");
+const VerifyDeposite = require("../db/schema/VerifyDepositeReciept.schema");
 
 async function getAllDepositeTransactionM(body) {
   try {
@@ -27,7 +28,23 @@ async function getAllCoinTransactionM(body) {
     return { message: error, success: false, token: null };
   }
 }
-async function getAllDepositeTransactionMForAdminM(body) {
+async function adminLedgerM(body) {
+  try {
+    const ledger = await UserLedger.find({});
+    return { message: ledger, success: true, token: null };
+  } catch (error) {
+    return { message: error, success: false, token: null };
+  }
+}
+async function getAllDepositeDataM() {
+  try {
+    const ledger = await VerifyDeposite.find({});
+    return { message: ledger, success: true, token: null };
+  } catch (error) {
+    return { message: error, success: false, token: null };
+  }
+}
+async function getAllLedgerDataM() {
   try {
     const ledger = await UserLedger.find({});
     return { message: ledger, success: true, token: null };
@@ -38,5 +55,7 @@ async function getAllDepositeTransactionMForAdminM(body) {
 module.exports = {
   getAllDepositeTransactionM,
   getAllCoinTransactionM,
-  getAllDepositeTransactionMForAdminM,
+  adminLedgerM,
+  getAllDepositeDataM,
+  getAllLedgerDataM,
 };
